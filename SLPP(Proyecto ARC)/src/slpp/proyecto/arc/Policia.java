@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.SocketException;
 
 /**
@@ -32,11 +33,16 @@ public class Policia extends Thread {
     public void run() {
 
         try {
+            int puertoServidor = 6789;
+            
+            MulticastSocket ms = new MulticastSocket(puertoServidor);  
+            ms.joinGroup(InetAddress.getByName(zonaTrabajo.getIpMulticast()));
+            
             String texto = "Hola soy Hilo " + String.valueOf(id);
-            DatagramSocket socketUDP = new DatagramSocket();
+            
             byte[] mensaje = texto.getBytes();
             InetAddress hostServidor = InetAddress.getByName("127.0.0.1");
-            int puertoServidor = 6789;
+            
 
             // Construimos un datagrama para enviar el mensaje al servidor
             DatagramPacket peticion
@@ -44,19 +50,19 @@ public class Policia extends Thread {
                             puertoServidor);
 
             // Enviamos el datagrama
-            socketUDP.send(peticion);
+            ms.send(peticion);
 
             // Construimos el DatagramPacket que contendrá la respuesta
-            byte[] bufer = new byte[1000];
-            DatagramPacket respuesta
-                    = new DatagramPacket(bufer, bufer.length);
-            socketUDP.receive(respuesta);
-
+            byte[] bufer = new byte[1024];
+            
+            
+            DatagramPacket dgp = new DatagramPacket(bufer, bufer.length);
+            ms.receive(dgp);
             // Enviamos la respuesta del servidor a la salida estandar
-            System.out.println("Respuesta: " + new String(respuesta.getData()));
+            System.out.println("Respuesta: " + new String(dgp.getData()));
 
             // Cerramos el socket
-            socketUDP.close();
+            ms.close();
 
         } catch (SocketException e) {
             System.out.println("Socket: " + e.getMessage());

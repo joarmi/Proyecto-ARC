@@ -8,6 +8,7 @@ package slpp.proyecto.arc;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 
 /**
@@ -20,7 +21,7 @@ public class Servidor {
     try {
 
       DatagramSocket socketUDP = new DatagramSocket(6789);
-      byte[] bufer = new byte[1000];
+      byte[] bufer = new byte[1024];
 
       while (true) {
         // Construimos el DatagramPacket para recibir peticiones
