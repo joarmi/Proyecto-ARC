@@ -20,6 +20,7 @@ public class Centralita {
             for (int i = 0; i < 50; i++) {
                 Policia p1 = new Policia(i);
                 
+                    
                 p1.start();
             }
             try {

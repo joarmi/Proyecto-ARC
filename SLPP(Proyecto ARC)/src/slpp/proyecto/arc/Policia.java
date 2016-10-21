@@ -18,10 +18,12 @@ import java.net.SocketException;
 public class Policia extends Thread {
 
     private int id;
+        private Zona zonaTrabajo;
     
 
-    public Policia(int id) {
+    public Policia(int id, Zona zonatrabajo) {
         this.id = id;
+        this.zonaTrabajo = zonatrabajo;
     }
 
     // Los argumentos proporcionan el mensaje y el nombre del servidor
