@@ -7,48 +7,53 @@ package slpp.proyecto.arc;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 
 /**
  *
  * @author Ventura
  */
 public class Servidor {
-    public static void main (String args[]) {
 
-    try {
+    public static void main(String args[]) {
 
-      DatagramSocket socketUDP = new DatagramSocket(6789);
-      byte[] bufer = new byte[1024];
+        try {
 
-      while (true) {
-        // Construimos el DatagramPacket para recibir peticiones
-        DatagramPacket peticion =
-          new DatagramPacket(bufer, bufer.length);
+            MulticastSocket socketUDP = new MulticastSocket(6789);
+            byte[] bufer = new byte[1024];
 
-        // Leemos una petición del DatagramSocket
-        socketUDP.receive(peticion);
+            while (true) {
+                // Construimos el DatagramPacket para recibir peticiones
+                DatagramPacket peticion
+                        = new DatagramPacket(bufer, bufer.length);
 
-        System.out.print("Datagrama recibido del host: " +
-                           peticion.getAddress());
-        System.out.println(" desde el puerto remoto: " +
-                           peticion.getPort());
+                // Leemos una petición del DatagramSocket
+                socketUDP.receive(peticion);
 
-        // Construimos el DatagramPacket para enviar la respuesta
-        DatagramPacket respuesta =
-          new DatagramPacket(peticion.getData(), peticion.getLength(),
-                             peticion.getAddress(), peticion.getPort());
+                System.out.print("Datagrama recibido del host: "
+                        + peticion.getAddress() + " con id " + new String(peticion.getData()));
+                System.out.println(" desde el puerto remoto: "
+                        + peticion.getPort());
 
-        // Enviamos la respuesta, que es un eco
-        socketUDP.send(respuesta);
-      }
+                // Construimos el DatagramPacket para enviar la respuesta
+                byte[] bufer2 = new byte[1024];
+                String texto  = "Soy hilo" + new String(peticion.getData());
+                bufer2 = texto.getBytes();
+                DatagramPacket respuesta
+                        = new DatagramPacket(bufer2, bufer2.length,
+                                InetAddress.getByName("225.254.254.0"), peticion.getPort());
 
-    } catch (SocketException e) {
-      System.out.println("Socket: " + e.getMessage());
-    } catch (IOException e) {
-      System.out.println("IO: " + e.getMessage());
+                // Enviamos la respuesta, que es un eco
+                socketUDP.send(respuesta);
+            }
+
+        } catch (SocketException e) {
+            System.out.println("Socket: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("IO: " + e.getMessage());
+        }
     }
-  }
 }

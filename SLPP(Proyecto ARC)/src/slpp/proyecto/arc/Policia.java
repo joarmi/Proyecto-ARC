@@ -38,7 +38,7 @@ public class Policia extends Thread {
             MulticastSocket ms = new MulticastSocket(puertoServidor);  
             ms.joinGroup(InetAddress.getByName(zonaTrabajo.getIpMulticast()));
             
-            String texto = "Hola soy Hilo " + String.valueOf(id);
+            String texto = String.valueOf(id);
             
             byte[] mensaje = texto.getBytes();
             InetAddress hostServidor = InetAddress.getByName("127.0.0.1");
@@ -59,7 +59,7 @@ public class Policia extends Thread {
             DatagramPacket dgp = new DatagramPacket(bufer, bufer.length);
             ms.receive(dgp);
             // Enviamos la respuesta del servidor a la salida estandar
-            System.out.println("Respuesta: " + new String(dgp.getData()));
+            System.out.println("Respuesta para Hilo " + id + " : " + new String(dgp.getData()));
 
             // Cerramos el socket
             ms.close();
